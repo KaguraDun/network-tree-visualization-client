@@ -1,0 +1,22 @@
+{
+  "collectCoverage": true,
+  "testEnvironment": "jsdom",
+  "collectCoverageFrom": [
+    "src/components/**/*.{js,jsx,ts,tsx}",
+    "src/pages/**/*.{js,jsx,ts,tsx}",
+    "src/features/**/*.{js,jsx,ts,tsx}"
+  ],
+  "setupFilesAfterEnv": ["@testing-library/jest-dom/extend-expect"],
+  "transform": {
+    "^.+\\.(js|jsx|ts|tsx)$": "babel-jest",
+    ".+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2)$": "jest-transform-stub"
+  },
+  "moduleNameMapper": {
+    "\\.svg": "<rootDir>/src/test/__mocks__/svgrMock.jsx",
+    "@/components/(.*)": "<rootDir>/src/components/$1",
+    "@/pages/(.*)": "<rootDir>/src/pages/$1",
+    "@/services/(.*)": "<rootDir>/src/services/$1",
+    "@/features/(.*)": "<rootDir>/src/features/$1",
+    "@/models/(.*)": "<rootDir>/src/models/$1"
+  }
+}
