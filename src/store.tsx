@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 
+import nodeSlice from '@/features/node';
+
 const store = configureStore({
   reducer: {
-    //reducers
+    node: nodeSlice,
   },
   devTools: process.env.NODE_ENV === 'development',
 });
