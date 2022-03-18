@@ -15,17 +15,23 @@ export const addNode = createAsyncThunk('node/addNode', api.addNode);
 const nodeSlice = createSlice({
   name: 'node',
   initialState: {
-    nodeList: [],
+    nodeList: {},
+  },
   },
   reducers: {},
   extraReducers: {
     [getRootNode.fulfilled]: (state, action) => {
       const [newNode] = action.payload;
-      state.nodeList.push(newNode);
+      const { id } = newNode;
+      
+      state.nodeList[id] = newNode;
     },
     [addNode.fulfilled]: (state, action) => {
       const [newNode] = action.payload;
-      state.nodeList.push(newNode);
+      const { id } = newNode;
+
+      state.nodeList[id] = newNode;
+    },
     },
   },
 });
