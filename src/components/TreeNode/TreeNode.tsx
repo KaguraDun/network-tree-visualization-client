@@ -1,18 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { addNode } from '@/features/node';
+import { addNode, getChildNodes, removeChildNodes } from '@/features/node';
 
 import s from './TreeNode.scss';
 
 const TreeNode = ({ data, children }) => {
   const { id, name, ip, port, hasChildren } = data;
+  const [isOpen, setIsOpen] = useState(false);
 
   const dispatch = useDispatch();
 
-  const handleNodeOpen = () => {};
+  const handleToggleNode = () => {
+    setIsOpen((open) => !open);
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      dispatch(
+        getChildNodes({
+          parentid: id,
+        })
+      );
+    } else {
+      dispatch(
+        removeChildNodes({
+          parentid: id,
+        })
+      );
+    }
+  }, [dispatch, id, isOpen]);
 
   const handleNodeAddChild = () => {
+    dispatch(
+      getChildNodes({
+        parentid: id,
+      })
+    );
+
     dispatch(
       addNode({
         parentID: id,
@@ -28,7 +53,7 @@ const TreeNode = ({ data, children }) => {
   return (
     <li key={id}>
       <div className={s.nodeElement}>
-        <button onClick={handleNodeOpen} type="button">
+        <button onClick={handleToggleNode} type="button">
           {hasChildren && '▼'}
           {`${id} ${name}`}
         </button>
