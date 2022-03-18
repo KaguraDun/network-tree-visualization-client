@@ -13,15 +13,13 @@ export const getRootNode = createAsyncThunk(
 const nodeSlice = createSlice({
   name: 'node',
   initialState: {
-    nodeList: {},
+    nodeList: [],
   },
   reducers: {},
   extraReducers: {
     [getRootNode.fulfilled]: (state, action) => {
       const [newNode] = action.payload;
-      const { id } = newNode;
-
-      state.nodeList[id] = newNode;
+      state.nodeList.push(newNode);
     },
   },
 });
