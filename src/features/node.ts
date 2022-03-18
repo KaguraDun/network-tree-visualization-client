@@ -22,8 +22,15 @@ const nodeSlice = createSlice({
   initialState: {
     nodeList: {},
   },
+  reducers: {
+    removeChildNodes: (state, action) => {
+      const { parentid } = action.payload;
+
+      Object.values(state.nodeList).forEach((node) => {
+        if (node.parentid === parentid) delete state.nodeList[node.id];
+      });
+    },
   },
-  reducers: {},
   extraReducers: {
     [getRootNode.fulfilled]: (state, action) => {
       const [newNode] = action.payload;
@@ -47,5 +54,7 @@ const nodeSlice = createSlice({
     },
   },
 });
+
+export const { removeChildNodes } = nodeSlice.actions;
 
 export default nodeSlice.reducer;
