@@ -26,6 +26,15 @@ class NodeApi {
 
     return newNode;
   };
+
+  getChildNodes = async ({ parentid }) => {
+    const response = await fetch(`${this.baseURL}/node/${parentid}/children`, {
+      method: 'GET',
+    });
+    const childrenNodes = response.json();
+
+    return childrenNodes;
+  };
 }
 
 export default NodeApi;
