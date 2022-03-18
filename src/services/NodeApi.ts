@@ -13,6 +13,19 @@ class NodeApi {
 
     return rootNode;
   };
+  addNode = async (properties) => {
+    const response = await fetch(`${this.baseURL}/node/`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json, text/plain, */*',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(properties),
+    });
+    const newNode = await response.json();
+
+    return newNode;
+  };
 }
 
 export default NodeApi;

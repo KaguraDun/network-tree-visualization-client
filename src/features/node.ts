@@ -10,6 +10,8 @@ export const getRootNode = createAsyncThunk(
   api.getRootNode
 );
 
+export const addNode = createAsyncThunk('node/addNode', api.addNode);
+
 const nodeSlice = createSlice({
   name: 'node',
   initialState: {
@@ -18,6 +20,10 @@ const nodeSlice = createSlice({
   reducers: {},
   extraReducers: {
     [getRootNode.fulfilled]: (state, action) => {
+      const [newNode] = action.payload;
+      state.nodeList.push(newNode);
+    },
+    [addNode.fulfilled]: (state, action) => {
       const [newNode] = action.payload;
       state.nodeList.push(newNode);
     },
