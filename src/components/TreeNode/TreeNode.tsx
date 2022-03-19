@@ -11,36 +11,32 @@ import {
 import s from './TreeNode.scss';
 
 const TreeNode = ({ data, children }) => {
-  const { id, name, ip, port, hasChildren, level } = data;
+  const { id, name, ip, port, hasChildren } = data;
   const [isOpen, setIsOpen] = useState(false);
 
   const dispatch = useDispatch();
 
   const handleToggleNode = () => {
-    setIsOpen((open) => !open);
-  };
-
-  useEffect(() => {
-    if (isOpen) {
+    if (!isOpen) {
       dispatch(
         getChildNodes({
-          parentid: id,
+          parentID: id,
         })
       );
     } else {
       dispatch(
         removeChildNodes({
-          parentid: id,
-          level,
+          parentID: id,
         })
       );
     }
-  }, [dispatch, id, isOpen, level]);
+    setIsOpen((open) => !open);
+  };
 
   const handleNodeAddChild = () => {
     dispatch(
       getChildNodes({
-        parentid: id,
+        parentID: id,
       })
     );
 

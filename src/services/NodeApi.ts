@@ -9,10 +9,11 @@ class NodeApi {
     const response = await fetch(`${this.baseURL}/node/`, {
       method: 'GET',
     });
-    const rootNode = response.json();
+    const rootNode = await response.json();
 
     return rootNode;
   };
+
   addNode = async (properties) => {
     const response = await fetch(`${this.baseURL}/node/`, {
       method: 'POST',
@@ -27,8 +28,8 @@ class NodeApi {
     return newNode;
   };
 
-  getChildNodes = async ({ parentid }) => {
-    const response = await fetch(`${this.baseURL}/node/${parentid}/children`, {
+  getChildNodes = async ({ parentID }) => {
+    const response = await fetch(`${this.baseURL}/node/${parentID}/children`, {
       method: 'GET',
     });
     const childrenNodes = response.json();

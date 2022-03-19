@@ -29,14 +29,26 @@ const nodeSlice = createSlice({
   },
   reducers: {
     removeChildNodes: (state, action) => {
-      const { parentid, level: parentLevel } = action.payload;
+      const { parentID: clickedID } = action.payload;
+      const nodesToDelete = [];
 
-      Object.values(state.nodeList).forEach((node) => {
-        if (node.parentid === parentid) delete state.nodeList[node.id];
-        const isParentNode =
-          node.level > parentLevel && node.parentid === parentid;
+      const childrenSearch = ({ id, children } = {}) => {
+        if (id !== clickedID) nodesToDelete.push(id);
 
-        if (isParentNode) {
+        if (children.length > 0) {
+          children.forEach((id) => {
+            childrenSearch(state.nodeList[id]);
+          });
+        }
+      };
+
+      childrenSearch(state.nodeList[clickedID]);
+
+      nodesToDelete.forEach((id) => {
+        const index = state.nodeList[clickedID].children.indexOf(id);
+        state.nodeList[clickedID].children.splice(index, 1);
+
+        delete state.nodeList[id];
       });
     },
   },
@@ -46,12 +58,17 @@ const nodeSlice = createSlice({
       const { id, name, parent_id: parentID, port, ip } = newNode;
 
       state.nodeList[id] = { id, name, parentID, port, ip };
+      state.nodeList[id].children = [];
     },
     [addNode.fulfilled]: (state, action) => {
       const [newNode] = action.payload;
       const { id, name, parent_id: parentID, port, ip } = newNode;
 
       state.nodeList[id] = { id, name, parentID, port, ip };
+      state.nodeList[id].children = [];
+
+      const { children } = state.nodeList[parentID];
+      state.nodeList[parentID].children = [...children, id];
     },
     [getChildNodes.fulfilled]: (state, action) => {
       const newNodes = action.payload;
@@ -60,6 +77,10 @@ const nodeSlice = createSlice({
         const { id, name, parent_id: parentID, port, ip } = newNode;
 
         state.nodeList[id] = { id, name, parentID, port, ip };
+        state.nodeList[id].children = [];
+
+        const { children } = state.nodeList[parentID];
+        state.nodeList[parentID].children = [...children, id];
       });
     },
   },
