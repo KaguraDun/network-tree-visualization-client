@@ -43,22 +43,23 @@ const nodeSlice = createSlice({
   extraReducers: {
     [getRootNode.fulfilled]: (state, action) => {
       const [newNode] = action.payload;
-      const { id } = newNode;
-      
-      state.nodeList[id] = newNode;
+      const { id, name, parent_id: parentID, port, ip } = newNode;
+
+      state.nodeList[id] = { id, name, parentID, port, ip };
     },
     [addNode.fulfilled]: (state, action) => {
       const [newNode] = action.payload;
-      const { id } = newNode;
+      const { id, name, parent_id: parentID, port, ip } = newNode;
 
-      state.nodeList[id] = newNode;
+      state.nodeList[id] = { id, name, parentID, port, ip };
     },
     [getChildNodes.fulfilled]: (state, action) => {
       const newNodes = action.payload;
 
       newNodes.forEach((newNode) => {
-        const { id } = newNode;
-        state.nodeList[id] = newNode;
+        const { id, name, parent_id: parentID, port, ip } = newNode;
+
+        state.nodeList[id] = { id, name, parentID, port, ip };
       });
     },
   },
