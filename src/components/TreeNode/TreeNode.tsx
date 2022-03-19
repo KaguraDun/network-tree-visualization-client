@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { addNode, getChildNodes, removeChildNodes } from '@/features/node';
+import {
+  addNode,
+  getChildNodes,
+  removeChildNodes,
+  removeNodeFromServer,
+} from '@/features/node';
 
 import s from './TreeNode.scss';
 
@@ -49,7 +54,13 @@ const TreeNode = ({ data, children }) => {
     );
   };
 
-  const handleNodeDelete = () => {};
+  const handleNodeDelete = () => {
+    dispatch(
+      removeNodeFromServer({
+        id,
+      })
+    );
+  };
 
   return (
     <li key={id}>

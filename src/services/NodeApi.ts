@@ -35,6 +35,12 @@ class NodeApi {
 
     return childrenNodes;
   };
+
+  removeNode = async ({ id }) => {
+    const response = await fetch(`${this.baseURL}/node/${id}`, {
+      method: 'DELETE',
+    });
+  };
 }
 
 export default NodeApi;

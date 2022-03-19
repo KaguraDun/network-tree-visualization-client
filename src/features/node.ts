@@ -17,6 +17,11 @@ export const getChildNodes = createAsyncThunk(
 
 export const addNode = createAsyncThunk('node/addNode', api.addNode);
 
+export const removeNodeFromServer = createAsyncThunk(
+  'node/removeNodeFromServer',
+  api.removeNode
+);
+
 const nodeSlice = createSlice({
   name: 'node',
   initialState: {
