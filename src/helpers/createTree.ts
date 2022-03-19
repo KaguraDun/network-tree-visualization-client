@@ -9,8 +9,8 @@ const createTree = (nodeList) => {
   });
 
   nodeList.forEach((node) => {
-    if (node.parentid !== null) {
-      childrenTable[node.parentid].children.push(node);
+    if (node.parentID !== null) {
+      childrenTable[node.parentID].children.push(node);
     } else {
       tree.push(node);
     }
