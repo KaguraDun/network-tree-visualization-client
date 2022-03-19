@@ -6,7 +6,7 @@ import { addNode, getChildNodes, removeChildNodes } from '@/features/node';
 import s from './TreeNode.scss';
 
 const TreeNode = ({ data, children }) => {
-  const { id, name, ip, port, hasChildren } = data;
+  const { id, name, ip, port, hasChildren, level } = data;
   const [isOpen, setIsOpen] = useState(false);
 
   const dispatch = useDispatch();
@@ -26,10 +26,11 @@ const TreeNode = ({ data, children }) => {
       dispatch(
         removeChildNodes({
           parentid: id,
+          level,
         })
       );
     }
-  }, [dispatch, id, isOpen]);
+  }, [dispatch, id, isOpen, level]);
 
   const handleNodeAddChild = () => {
     dispatch(

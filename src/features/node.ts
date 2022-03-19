@@ -24,10 +24,14 @@ const nodeSlice = createSlice({
   },
   reducers: {
     removeChildNodes: (state, action) => {
-      const { parentid } = action.payload;
+      const { parentid, level: parentLevel } = action.payload;
 
       Object.values(state.nodeList).forEach((node) => {
         if (node.parentid === parentid) delete state.nodeList[node.id];
+        const isParentNode =
+          node.level > parentLevel && node.parentid === parentid;
+
+        if (isParentNode) {
       });
     },
   },
