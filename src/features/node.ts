@@ -8,7 +8,13 @@ const api = new NodeApi();
 
 export const getRootNode = createAsyncThunk(
   'node/getRootNode',
-  api.getRootNode
+  async (_, { rejectWithValue }) => {
+    const response = await api.getRootNode();
+
+    if (response?.status === 404) {
+      return rejectWithValue(response?.message);
+    }
+  }
 );
 
 export const getChildNodes = createAsyncThunk(
@@ -82,11 +88,17 @@ const nodeSlice = createSlice({
 
       state.nodeList[id] = { id, name, parentID, port, ip, children: [] };
     },
+    [getRootNode.rejected]: (state, action) => {
+      const message = action.payload;
+      console.log(message);
+    },
     [addNode.fulfilled]: (state, action) => {
       const [newNode] = action.payload;
       const { id, name, parent_id: parentID, port, ip } = newNode;
 
       state.nodeList[id] = { id, name, parentID, port, ip, children: [] };
+
+      if (parentID === null) return;
 
       const parentChildren = state.nodeList[parentID].children;
       const isElementExist = parentChildren.indexOf(id) !== -1;
