@@ -44,6 +44,19 @@ class NodeApi {
 
     return response.json();
   };
+
+  updateNodeData = async ({ id, nodeData }) => {
+    const response = await fetch(`${this.baseURL}/node/${id}`, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json, text/plain, */*',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(nodeData),
+    });
+
+    return response.json();
+  };
 }
 
 export default NodeApi;
