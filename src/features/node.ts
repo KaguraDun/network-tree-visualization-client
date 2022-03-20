@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
@@ -19,7 +20,14 @@ export const addNode = createAsyncThunk('node/addNode', api.addNode);
 
 export const removeNodeFromServer = createAsyncThunk(
   'node/removeNodeFromServer',
-  api.removeNode
+  async ({ id }, { dispatch }) => {
+    const response = await api.removeNode({ id });
+
+    if (response?.status === 200) {
+      dispatch(removeChildNodes({ parentID: id }));
+      dispatch(removeNode({ id }));
+    }
+  }
 );
 
 const nodeSlice = createSlice({
@@ -46,10 +54,25 @@ const nodeSlice = createSlice({
 
       nodesToDelete.forEach((id) => {
         const index = state.nodeList[clickedID].children.indexOf(id);
-        state.nodeList[clickedID].children.splice(index, 1);
+        if (index !== -1) {
+          state.nodeList[clickedID].children.splice(index, 1);
+        }
 
         delete state.nodeList[id];
       });
+    },
+    removeNode: (state, action) => {
+      const { id } = action.payload;
+      const { parentID } = state.nodeList[id];
+
+      if (parentID !== null) {
+        const index = state.nodeList[parentID].children.indexOf(id);
+        if (index !== -1) {
+          state.nodeList[parentID].children.splice(index, 1);
+        }
+      }
+
+      delete state.nodeList[id];
     },
   },
   extraReducers: {
@@ -57,18 +80,21 @@ const nodeSlice = createSlice({
       const [newNode] = action.payload;
       const { id, name, parent_id: parentID, port, ip } = newNode;
 
-      state.nodeList[id] = { id, name, parentID, port, ip };
-      state.nodeList[id].children = [];
+      state.nodeList[id] = { id, name, parentID, port, ip, children: [] };
     },
     [addNode.fulfilled]: (state, action) => {
       const [newNode] = action.payload;
       const { id, name, parent_id: parentID, port, ip } = newNode;
 
-      state.nodeList[id] = { id, name, parentID, port, ip };
-      state.nodeList[id].children = [];
+      state.nodeList[id] = { id, name, parentID, port, ip, children: [] };
 
-      const { children } = state.nodeList[parentID];
-      state.nodeList[parentID].children = [...children, id];
+      const parentChildren = state.nodeList[parentID].children;
+      const isElementExist = parentChildren.indexOf(id) !== -1;
+      const shouldUpdateChildren = parentID && !isElementExist;
+
+      if (shouldUpdateChildren) {
+        state.nodeList[parentID].children.push(id);
+      }
     },
     [getChildNodes.fulfilled]: (state, action) => {
       const newNodes = action.payload;
@@ -76,16 +102,20 @@ const nodeSlice = createSlice({
       newNodes.forEach((newNode) => {
         const { id, name, parent_id: parentID, port, ip } = newNode;
 
-        state.nodeList[id] = { id, name, parentID, port, ip };
-        state.nodeList[id].children = [];
+        state.nodeList[id] = { id, name, parentID, port, ip, children: [] };
 
-        const { children } = state.nodeList[parentID];
-        state.nodeList[parentID].children = [...children, id];
+        const parentChildren = state.nodeList[parentID].children;
+        const isElementExist = parentChildren.indexOf(id) !== -1;
+        const shouldUpdateChildren = parentID && !isElementExist;
+
+        if (shouldUpdateChildren) {
+          state.nodeList[parentID].children.push(id);
+        }
       });
     },
   },
 });
 
-export const { removeChildNodes } = nodeSlice.actions;
+export const { removeChildNodes, removeNode } = nodeSlice.actions;
 
 export default nodeSlice.reducer;

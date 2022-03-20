@@ -41,6 +41,8 @@ class NodeApi {
     const response = await fetch(`${this.baseURL}/node/${id}`, {
       method: 'DELETE',
     });
+
+    return response.json();
   };
 }
 
