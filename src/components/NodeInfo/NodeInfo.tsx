@@ -1,13 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { updateNodeData, updateNodeDataOnServer } from '@/features/node';
+import {
+  addNode,
+  changeNodeInfoType,
+  getChildNodes,
+  updateNodeDataOnServer,
+} from '@/features/node';
 import NodeInfoType from '@/models/NodeInfoType';
 
 function NodeInfo() {
   const [nodeData, setNodeData] = useState({});
 
   const dispatch = useDispatch();
+  const nameInputRef = useRef(null);
 
   const getSelectedNodeID = ({ node }) => node.selectedNodeID;
   const selectedNodeID = useSelector(getSelectedNodeID);
@@ -27,6 +33,17 @@ function NodeInfo() {
     const { name, ip, port } = selectedNodeData || {};
     setNodeData({ name, ip, port });
   }, [selectedNodeData]);
+
+  const clearNodeData = () => {
+    setNodeData({ name: '', ip: '', port: '' });
+  };
+
+  useEffect(() => {
+    if (formType === NodeInfoType.create) {
+      clearNodeData();
+      nameInputRef.current.focus();
+    }
+  }, [formType]);
 
   const handleEditNodeInfo = (e: React.ChangeEvent) => {
     if (e.target instanceof HTMLInputElement) {
@@ -49,20 +66,44 @@ function NodeInfo() {
   };
 
   const handleNodeCreate = () => {
-    console.log('create');
+    const { id } = selectedNodeData || {};
+
+    dispatch(
+      getChildNodes({
+        parentID: id,
+      })
+    );
+
+    dispatch(
+      addNode({
+        parentID: id,
+        ...nodeData,
+      })
+    );
+
+    dispatch(changeNodeInfoType(NodeInfoType.edit));
   };
 
   const handleCancelNodeCreate = () => {
-    console.log('cancel create');
+    dispatch(changeNodeInfoType(NodeInfoType.edit));
+    clearNodeData();
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
   };
 
   return (
-    <div className="d-flex flex-column bd-highlight justify-content-between vh-50">
-      <h2>Node</h2>
+    <form
+      className="d-flex flex-column bd-highlight justify-content-between vh-50"
+      onSubmit={handleFormSubmit}
+    >
+      <h2> {formType === NodeInfoType.create ? 'Node create' : 'Node'}</h2>
 
       <label>
         Node name:
         <input
+          ref={nameInputRef}
           name="name"
           onChange={handleEditNodeInfo}
           type="text"
@@ -100,7 +141,7 @@ function NodeInfo() {
           }
           type="button"
         >
-          Apply
+          {formType === NodeInfoType.create ? 'Create' : 'Apply'}
         </button>
         <button
           className="btn btn-secondary"
@@ -114,7 +155,7 @@ function NodeInfo() {
           Cancel
         </button>
       </div>
-    </div>
+    </form>
   );
 }
 

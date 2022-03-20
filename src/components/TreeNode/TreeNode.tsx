@@ -1,18 +1,19 @@
 import './TreeNode.scss';
 
-import React, { ReactText, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import {
-  addNode,
+  changeNodeInfoType,
   getChildNodes,
   removeChildNodes,
   removeNodeFromServer,
   selectNode,
 } from '@/features/node';
+import NodeInfoType from '@/models/NodeInfoType';
 
 const TreeNode = ({ data, children }) => {
-  const { id, name, ip, port, hasChildren } = data;
+  const { id, name, hasChildren } = data;
   const [isOpen, setIsOpen] = useState(false);
 
   const dispatch = useDispatch();
@@ -35,18 +36,10 @@ const TreeNode = ({ data, children }) => {
   };
 
   const handleNodeAddChild = () => {
+    dispatch(changeNodeInfoType(NodeInfoType.create));
     dispatch(
-      getChildNodes({
-        parentID: id,
-      })
-    );
-
-    dispatch(
-      addNode({
-        parentID: id,
-        name: `${name} child`,
-        ip,
-        port,
+      selectNode({
+        id,
       })
     );
   };
@@ -60,6 +53,7 @@ const TreeNode = ({ data, children }) => {
   };
 
   const handleNodeSelect = () => {
+    dispatch(changeNodeInfoType(NodeInfoType.edit));
     dispatch(
       selectNode({
         id,
@@ -68,18 +62,18 @@ const TreeNode = ({ data, children }) => {
   };
 
   return (
-    <li key={id}>
+    <li key={id} className="d-flex flex-column align-items-baseline">
       <div className="nodeElement">
         <button onClick={handleToggleNode} type="button">
           ▼
         </button>
 
-        <button onClick={handleNodeAddChild} type="button">
-          +
-        </button>
-
         <button onClick={handleNodeSelect} type="button">
           {`${id} ${name}`}
+        </button>
+
+        <button onClick={handleNodeAddChild} type="button">
+          +
         </button>
 
         <button onClick={handleNodeDelete} type="button">

@@ -25,7 +25,21 @@ export const getChildNodes = createAsyncThunk(
   api.getChildNodes
 );
 
-export const addNode = createAsyncThunk('node/addNode', api.addNode);
+export const addNode = createAsyncThunk(
+  'node/addNode',
+  async (properties, { dispatch, rejectWithValue }) => {
+    const response = await api.addNode(properties);
+
+    if (response?.length > 0) {
+      const { id } = response[0];
+
+      dispatch(selectNode({ id }));
+      return response;
+    }
+
+    return rejectWithValue({ message: "Node don't added" });
+  }
+);
 
 export const removeNodeFromServer = createAsyncThunk(
   'node/removeNodeFromServer',
@@ -163,7 +177,12 @@ const nodeSlice = createSlice({
   },
 });
 
-export const { removeChildNodes, removeNode, selectNode, updateNodeData } =
-  nodeSlice.actions;
+export const {
+  removeChildNodes,
+  removeNode,
+  selectNode,
+  updateNodeData,
+  changeNodeInfoType,
+} = nodeSlice.actions;
 
 export default nodeSlice.reducer;
