@@ -2,6 +2,7 @@
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
+import NodeInfoType from '@/models/NodeInfoType';
 import NodeApi from '@/services/NodeApi';
 
 const api = new NodeApi();
@@ -14,6 +15,8 @@ export const getRootNode = createAsyncThunk(
     if (response?.status === 404) {
       return rejectWithValue(response?.message);
     }
+
+    return response;
   }
 );
 
@@ -36,9 +39,25 @@ export const removeNodeFromServer = createAsyncThunk(
   }
 );
 
+export const updateNodeDataOnServer = createAsyncThunk(
+  'node/updateNodeData',
+  async ({ id, nodeData }, { dispatch, rejectWithValue }) => {
+    const response = await api.updateNodeData({ id, nodeData });
+
+    if (response?.status === 201) {
+      dispatch(updateNodeData({ id, nodeData }));
+      return response;
+    }
+
+    return rejectWithValue({ message: "Node don't updated" });
+  }
+);
+
 const nodeSlice = createSlice({
   name: 'node',
   initialState: {
+    selectedNodeID: undefined,
+    nodeInfoType: NodeInfoType.edit,
     nodeList: {},
   },
   reducers: {
@@ -79,6 +98,19 @@ const nodeSlice = createSlice({
       }
 
       delete state.nodeList[id];
+    },
+    selectNode: (state, action) => {
+      const { id } = action.payload;
+
+      state.selectedNodeID = id;
+    },
+    changeNodeInfoType: (state, action) => {
+      const type: NodeInfoType = action.payload;
+      state.nodeInfoType = type;
+    },
+    updateNodeData: (state, action) => {
+      const { id, nodeData } = action.payload;
+      state.nodeList[id] = { ...state.nodeList[id], ...nodeData };
     },
   },
   extraReducers: {
@@ -125,9 +157,13 @@ const nodeSlice = createSlice({
         }
       });
     },
+    [updateNodeDataOnServer.fulfilled]: (state, action) => {
+      console.log('updated');
+    },
   },
 });
 
-export const { removeChildNodes, removeNode } = nodeSlice.actions;
+export const { removeChildNodes, removeNode, selectNode, updateNodeData } =
+  nodeSlice.actions;
 
 export default nodeSlice.reducer;
