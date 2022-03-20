@@ -1,3 +1,5 @@
+import './TreeNode.scss';
+
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -7,8 +9,6 @@ import {
   removeChildNodes,
   removeNodeFromServer,
 } from '@/features/node';
-
-import s from './TreeNode.scss';
 
 const TreeNode = ({ data, children }) => {
   const { id, name, ip, port, hasChildren } = data;
@@ -60,7 +60,7 @@ const TreeNode = ({ data, children }) => {
 
   return (
     <li key={id}>
-      <div className={s.nodeElement}>
+      <div className="nodeElement">
         <button onClick={handleToggleNode} type="button">
           {hasChildren && '▼'}
           {`${id} ${name}`}
