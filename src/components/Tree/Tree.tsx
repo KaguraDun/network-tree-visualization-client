@@ -6,10 +6,10 @@ import { addNode } from '@/features/node';
 
 const Tree = ({ data }) => {
   const treeElements = data.map((node) => {
-    const { children } = node || [];
+    const { id, children } = node || [];
 
     return (
-      <ul>
+      <ul key={id.toString()}>
         {node && (
           <TreeNode data={node}>
             {children && children?.length > 0 ? <Tree data={children} /> : ''}

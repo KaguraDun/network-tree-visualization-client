@@ -62,7 +62,7 @@ const TreeNode = ({ data, children }) => {
   };
 
   return (
-    <li key={id} className="d-flex flex-column align-items-baseline">
+    <li key={id.toString()} className="d-flex flex-column align-items-baseline">
       <div className="nodeElement">
         <button onClick={handleToggleNode} type="button">
           ▼
