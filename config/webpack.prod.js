@@ -29,10 +29,8 @@ module.exports = merge(common, {
           },
           'postcss-loader',
           {  
-          loader: 'sass-loader',
-          options: {
-            additionalData: `@import "@/styles/_variables.scss";\n@import "@/styles/common/_mixins.scss";`,
-          },},
+            loader: 'sass-loader',
+          },
         ],
       },
       {
