@@ -19,6 +19,8 @@ const TreeNode = ({ data, children }) => {
   const dispatch = useDispatch();
 
   const handleToggleNode = () => {
+    if (!hasChildren) return;
+
     if (!isOpen) {
       dispatch(
         getChildNodes({
@@ -32,6 +34,7 @@ const TreeNode = ({ data, children }) => {
         })
       );
     }
+
     setIsOpen((open) => !open);
   };
 
@@ -64,9 +67,11 @@ const TreeNode = ({ data, children }) => {
   return (
     <li key={id.toString()} className="d-flex flex-column align-items-baseline">
       <div className="nodeElement">
-        <button onClick={handleToggleNode} type="button">
-          ▼
-        </button>
+        {hasChildren && (
+          <button className="btn" onClick={handleToggleNode} type="button">
+            <i className="bi bi-caret-down-fill" />
+          </button>
+        )}
 
         <button onClick={handleNodeSelect} type="button">
           {`${id} ${name}`}

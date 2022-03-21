@@ -109,6 +109,10 @@ const nodeSlice = createSlice({
         if (index !== -1) {
           state.nodeList[parentID].children.splice(index, 1);
         }
+
+        if (state.nodeList[parentID].children.length === 0) {
+          state.nodeList[parentID].hasChildren = false;
+        }
       }
 
       delete state.nodeList[id];
@@ -130,9 +134,17 @@ const nodeSlice = createSlice({
   extraReducers: {
     [getRootNode.fulfilled]: (state, action) => {
       const [newNode] = action.payload;
-      const { id, name, parent_id: parentID, port, ip } = newNode;
+      const { id, name, parent_id: parentID, port, ip, hasChildren } = newNode;
 
-      state.nodeList[id] = { id, name, parentID, port, ip, children: [] };
+      state.nodeList[id] = {
+        id,
+        name,
+        parentID,
+        port,
+        ip,
+        hasChildren,
+        children: [],
+      };
     },
     [getRootNode.rejected]: (state, action) => {
       const message = action.payload;
@@ -140,9 +152,17 @@ const nodeSlice = createSlice({
     },
     [addNode.fulfilled]: (state, action) => {
       const [newNode] = action.payload;
-      const { id, name, parent_id: parentID, port, ip } = newNode;
+      const { id, name, parent_id: parentID, port, ip, hasChildren } = newNode;
 
-      state.nodeList[id] = { id, name, parentID, port, ip, children: [] };
+      state.nodeList[id] = {
+        id,
+        name,
+        parentID,
+        port,
+        ip,
+        hasChildren,
+        children: [],
+      };
 
       if (parentID === null) return;
 
@@ -151,6 +171,7 @@ const nodeSlice = createSlice({
       const shouldUpdateChildren = parentID && !isElementExist;
 
       if (shouldUpdateChildren) {
+        state.nodeList[parentID].hasChildren = true;
         state.nodeList[parentID].children.push(id);
       }
     },
@@ -158,9 +179,24 @@ const nodeSlice = createSlice({
       const newNodes = action.payload;
 
       newNodes.forEach((newNode) => {
-        const { id, name, parent_id: parentID, port, ip } = newNode;
+        const {
+          id,
+          name,
+          parent_id: parentID,
+          port,
+          ip,
+          hasChildren,
+        } = newNode;
 
-        state.nodeList[id] = { id, name, parentID, port, ip, children: [] };
+        state.nodeList[id] = {
+          id,
+          name,
+          parentID,
+          port,
+          ip,
+          hasChildren,
+          children: [],
+        };
 
         const parentChildren = state.nodeList[parentID].children;
         const isElementExist = parentChildren.indexOf(id) !== -1;
