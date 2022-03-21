@@ -1,5 +1,7 @@
+import { NodeData, NodeElement, UpdateNodeData } from '@/models/Node';
+
 class NodeApi {
-  private baseURL: string;
+  private readonly baseURL: string;
 
   constructor() {
     this.baseURL = 'http://localhost:3000/api';
@@ -14,21 +16,21 @@ class NodeApi {
     return rootNode;
   };
 
-  addNode = async (properties) => {
+  addNode = async (nodeData: NodeData) => {
     const response = await fetch(`${this.baseURL}/node/`, {
       method: 'POST',
       headers: {
         Accept: 'application/json, text/plain, */*',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(properties),
+      body: JSON.stringify(nodeData),
     });
     const newNode = await response.json();
 
     return newNode;
   };
 
-  getChildNodes = async ({ parentID }) => {
+  getChildNodes = async (parentID: NodeElement['id']) => {
     const response = await fetch(`${this.baseURL}/node/${parentID}/children`, {
       method: 'GET',
     });
@@ -37,7 +39,7 @@ class NodeApi {
     return childrenNodes;
   };
 
-  removeNode = async ({ id }) => {
+  removeNode = async (id: NodeElement['id']) => {
     const response = await fetch(`${this.baseURL}/node/${id}`, {
       method: 'DELETE',
     });
@@ -45,7 +47,7 @@ class NodeApi {
     return response.json();
   };
 
-  updateNodeData = async ({ id, nodeData }) => {
+  updateNodeData = async ({ id, nodeData }: UpdateNodeData) => {
     const response = await fetch(`${this.baseURL}/node/${id}`, {
       method: 'PUT',
       headers: {
