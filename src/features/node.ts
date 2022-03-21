@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable no-param-reassign */
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import {
+  NodeData,
+  NodeElement,
+  NodeElementFromServer,
+  NodeList,
+  UpdateNodeData,
+} from '@/models/Node';
 import NodeInfoType from '@/models/NodeInfoType';
 import NodeApi from '@/services/NodeApi';
 
@@ -27,13 +34,13 @@ export const getChildNodes = createAsyncThunk(
 
 export const addNode = createAsyncThunk(
   'node/addNode',
-  async (properties, { dispatch, rejectWithValue }) => {
-    const response = await api.addNode(properties);
+  async (nodeData: NodeData, { dispatch, rejectWithValue }) => {
+    const response = await api.addNode(nodeData);
 
     if (response?.length > 0) {
       const { id } = response[0];
 
-      dispatch(selectNode({ id }));
+      dispatch(selectNode(id));
       return response;
     }
 
@@ -43,19 +50,19 @@ export const addNode = createAsyncThunk(
 
 export const removeNodeFromServer = createAsyncThunk(
   'node/removeNodeFromServer',
-  async ({ id }, { dispatch }) => {
-    const response = await api.removeNode({ id });
+  async (id: NodeElement['id'], { dispatch }) => {
+    const response = await api.removeNode(id);
 
     if (response?.status === 200) {
-      dispatch(removeChildNodes({ parentID: id }));
-      dispatch(removeNode({ id }));
+      dispatch(removeChildNodes(id));
+      dispatch(removeNode(id));
     }
   }
 );
 
 export const updateNodeDataOnServer = createAsyncThunk(
   'node/updateNodeData',
-  async ({ id, nodeData }, { dispatch, rejectWithValue }) => {
+  async ({ id, nodeData }: UpdateNodeData, { dispatch, rejectWithValue }) => {
     const response = await api.updateNodeData({ id, nodeData });
 
     if (response?.status === 201) {
@@ -67,24 +74,32 @@ export const updateNodeDataOnServer = createAsyncThunk(
   }
 );
 
+interface NodeState {
+  selectedNodeID: number | null;
+  nodeInfoType: NodeInfoType;
+  nodeList: NodeList;
+}
+
+const initialState: NodeState = {
+  selectedNodeID: null,
+  nodeInfoType: NodeInfoType.edit,
+  nodeList: {},
+};
+
 const nodeSlice = createSlice({
   name: 'node',
-  initialState: {
-    selectedNodeID: undefined,
-    nodeInfoType: NodeInfoType.edit,
-    nodeList: {},
-  },
+  initialState,
   reducers: {
-    removeChildNodes: (state, action) => {
-      const { parentID: clickedID } = action.payload;
-      const nodesToDelete = [];
+    removeChildNodes: (state, action: PayloadAction<NodeElement['id']>) => {
+      const clickedID = action.payload;
+      const nodesToDelete: number[] = [];
 
-      const childrenSearch = ({ id, children } = {}) => {
+      const childrenSearch = ({ id, children }: NodeElement) => {
         if (id !== clickedID) nodesToDelete.push(id);
 
         if (children.length > 0) {
-          children.forEach((id) => {
-            childrenSearch(state.nodeList[id]);
+          children.forEach((childrenId: NodeElement['id']) => {
+            childrenSearch(state.nodeList[childrenId]);
           });
         }
       };
@@ -100,8 +115,8 @@ const nodeSlice = createSlice({
         delete state.nodeList[id];
       });
     },
-    removeNode: (state, action) => {
-      const { id } = action.payload;
+    removeNode: (state, action: PayloadAction<NodeElement['id']>) => {
+      const id = action.payload;
       const { parentID } = state.nodeList[id];
 
       if (parentID !== null) {
@@ -117,75 +132,30 @@ const nodeSlice = createSlice({
 
       delete state.nodeList[id];
     },
-    selectNode: (state, action) => {
-      const { id } = action.payload;
+    selectNode: (state, action: PayloadAction<NodeElement['id'] | null>) => {
+      const id = action.payload;
 
       state.selectedNodeID = id;
     },
-    changeNodeInfoType: (state, action) => {
-      const type: NodeInfoType = action.payload;
+    changeNodeInfoType: (state, action: PayloadAction<NodeInfoType>) => {
+      const type = action.payload;
       state.nodeInfoType = type;
     },
-    updateNodeData: (state, action) => {
+    updateNodeData: (state, action: PayloadAction<UpdateNodeData>) => {
       const { id, nodeData } = action.payload;
+
       state.nodeList[id] = { ...state.nodeList[id], ...nodeData };
     },
-    toggleNodeIsOpen: (state, action) => {
-      const { id } = action.payload;
+    toggleNodeIsOpen: (state, action: PayloadAction<NodeElement['id']>) => {
+      const id = action.payload;
       state.nodeList[id].isOpen = !state.nodeList[id].isOpen;
     },
   },
-  extraReducers: {
-    [getRootNode.fulfilled]: (state, action) => {
-      const [newNode] = action.payload;
-      const { id, name, parent_id: parentID, port, ip, hasChildren } = newNode;
-
-      state.nodeList[id] = {
-        id,
-        name,
-        parentID,
-        port,
-        ip,
-        hasChildren,
-        children: [],
-        isOpen: false,
-      };
-    },
-    [getRootNode.rejected]: (state, action) => {
-      const message = action.payload;
-      console.log(message);
-    },
-    [addNode.fulfilled]: (state, action) => {
-      const [newNode] = action.payload;
-      const { id, name, parent_id: parentID, port, ip, hasChildren } = newNode;
-
-      state.nodeList[id] = {
-        id,
-        name,
-        parentID,
-        port,
-        ip,
-        hasChildren,
-        children: [],
-        isOpen: false,
-      };
-
-      if (parentID === null) return;
-
-      const parentChildren = state.nodeList[parentID].children;
-      const isElementExist = parentChildren.indexOf(id) !== -1;
-      const shouldUpdateChildren = parentID && !isElementExist;
-
-      if (shouldUpdateChildren) {
-        state.nodeList[parentID].hasChildren = true;
-        state.nodeList[parentID].isOpen = true;
-        state.nodeList[parentID].children.push(id);
-      }
-    },
-    [getChildNodes.fulfilled]: (state, action) => {
-      const newNodes = action.payload;
-
-      newNodes.forEach((newNode) => {
+  extraReducers: (builder) => {
+    builder.addCase(
+      getRootNode.fulfilled,
+      (state, action: PayloadAction<NodeElementFromServer[]>) => {
+        const [newNode] = action.payload;
         const {
           id,
           name,
@@ -203,20 +173,87 @@ const nodeSlice = createSlice({
           ip,
           hasChildren,
           children: [],
+          isOpen: false,
         };
+      }
+    );
+
+    builder.addCase(
+      addNode.fulfilled,
+      (state, action: PayloadAction<NodeElementFromServer[]>) => {
+        const [newNode] = action.payload;
+        const {
+          id,
+          name,
+          parent_id: parentID,
+          port,
+          ip,
+          hasChildren,
+        } = newNode;
+
+        state.nodeList[id] = {
+          id,
+          name,
+          parentID,
+          port,
+          ip,
+          hasChildren,
+          children: [],
+          isOpen: false,
+        };
+
+        if (parentID === null) return;
 
         const parentChildren = state.nodeList[parentID].children;
         const isElementExist = parentChildren.indexOf(id) !== -1;
         const shouldUpdateChildren = parentID && !isElementExist;
 
         if (shouldUpdateChildren) {
+          state.nodeList[parentID].hasChildren = true;
+          state.nodeList[parentID].isOpen = true;
           state.nodeList[parentID].children.push(id);
         }
-      });
-    },
-    [updateNodeDataOnServer.fulfilled]: (state, action) => {
-      console.log('updated');
-    },
+      }
+    );
+
+    builder.addCase(
+      getChildNodes.fulfilled,
+      (state, action: PayloadAction<NodeElementFromServer[]>) => {
+        const newNodes = action.payload;
+
+        newNodes.forEach((newNode) => {
+          const {
+            id,
+            name,
+            parent_id: parentID,
+            port,
+            ip,
+            hasChildren,
+          } = newNode;
+
+          state.nodeList[id] = {
+            id,
+            name,
+            parentID,
+            port,
+            ip,
+            hasChildren,
+            isOpen: false,
+            children: [],
+          };
+
+          if (parentID === null) return;
+
+          const parentChildren = state.nodeList[parentID].children;
+          const isElementExist = parentChildren.indexOf(id) !== -1;
+          const shouldUpdateChildren = parentID && !isElementExist;
+
+          if (shouldUpdateChildren) {
+            state.nodeList[parentID].children.push(id);
+          }
+        });
+      }
+    );
   },
 });
 
