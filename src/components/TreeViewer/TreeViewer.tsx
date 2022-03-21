@@ -14,7 +14,9 @@ const TreeViewer = () => {
   const nodeList = useSelector(NodeList);
 
   useEffect(() => {
-    const nodeTree = createTree(JSON.parse(JSON.stringify(nodeList)));
+    const treeCopy = JSON.parse(JSON.stringify(Object.values(nodeList)));
+    const nodeTree = createTree(treeCopy);
+
     setTree(nodeTree);
   }, [nodeList]);
 
