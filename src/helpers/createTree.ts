@@ -12,7 +12,9 @@ const createTree = (nodeList: NodeElement[]): NodeElementWithChildren[] => {
 
   nodeList.forEach((node) => {
     if (node.parentID !== null) {
-      childrenTable[node.parentID].childrenElements.push(node);
+      childrenTable[node.parentID].childrenElements.push(
+        Object.assign(node, { childrenElements: [] })
+      );
     } else {
       tree.push(Object.assign(node, { childrenElements: [] }));
     }
