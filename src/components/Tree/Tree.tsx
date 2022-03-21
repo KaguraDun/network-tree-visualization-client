@@ -1,3 +1,5 @@
+import './Tree.scss';
+
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -9,7 +11,7 @@ const Tree = ({ data }) => {
     const { id, children } = node || [];
 
     return (
-      <ul key={id.toString()}>
+      <ul key={id.toString()} className="tree">
         {node && (
           <TreeNode data={node}>
             {children && children?.length > 0 ? <Tree data={children} /> : ''}
@@ -36,8 +38,8 @@ const Tree = ({ data }) => {
 
   if (isEmpty) {
     return (
-      <button onClick={handleAddRootNode} type="button">
-        +
+      <button className="btn" onClick={handleAddRootNode} type="button">
+        <i className="bi bi-plus-circle" />
       </button>
     );
   }

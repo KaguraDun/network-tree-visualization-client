@@ -1,7 +1,7 @@
 import './TreeNode.scss';
 
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
   changeNodeInfoType,
@@ -15,6 +15,9 @@ import NodeInfoType from '@/models/NodeInfoType';
 const TreeNode = ({ data, children }) => {
   const { id, name, hasChildren } = data;
   const [isOpen, setIsOpen] = useState(false);
+
+  const getSelectedNodeID = ({ node }) => node.selectedNodeID;
+  const selectedNodeID = useSelector(getSelectedNodeID);
 
   const dispatch = useDispatch();
 
@@ -64,9 +67,20 @@ const TreeNode = ({ data, children }) => {
     );
   };
 
+  const isSelected = id === selectedNodeID;
+
   return (
-    <li key={id.toString()} className="d-flex flex-column align-items-baseline">
-      <div className="nodeElement">
+    <li
+      key={id.toString()}
+      className={`d-flex flex-column align-items-baseline ${
+        !hasChildren && 'tree-node'
+      }`}
+    >
+      <div
+        className={`tree-node-element d-flex w100 ${
+          isSelected && 'tree-node-element-selected '
+        }`}
+      >
         {hasChildren && (
           <button className="btn" onClick={handleToggleNode} type="button">
             <i
@@ -79,16 +93,28 @@ const TreeNode = ({ data, children }) => {
           </button>
         )}
 
-        <button onClick={handleNodeSelect} type="button">
+        <button
+          className="btn btn p-1 me-2"
+          onClick={handleNodeSelect}
+          type="button"
+        >
           {`${id} ${name}`}
         </button>
 
-        <button onClick={handleNodeAddChild} type="button">
-          +
+        <button
+          className="btn-add btn"
+          onClick={handleNodeAddChild}
+          type="button"
+        >
+          <i className="bi bi-plus-circle" />
         </button>
 
-        <button onClick={handleNodeDelete} type="button">
-          -
+        <button
+          className="btn-del btn"
+          onClick={handleNodeDelete}
+          type="button"
+        >
+          <i className="bi bi-dash-circle" />
         </button>
       </div>
 
