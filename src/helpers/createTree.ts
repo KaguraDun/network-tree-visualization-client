@@ -1,33 +1,23 @@
-import { NodeElement } from '@/models/Node';
+import { NodeElement, NodeElementWithChildren } from '@/models/Node';
 
-type NodeElementWithoutChildren = Omit<NodeElement, 'children'>;
-type NodeElementWithChildrenElements = NodeElementWithoutChildren & {
-  children: NodeElementWithoutChildren[];
-};
+type ChildrenTable = Record<number, NodeElementWithChildren>;
 
-type ChildrenTable = Record<number, NodeElementWithChildrenElements>;
-
-const createTree = (nodeList: NodeElement[]) => {
-  const tree: NodeElement[] = [];
+const createTree = (nodeList: NodeElement[]): NodeElementWithChildren[] => {
+  const tree: NodeElementWithChildren[] = [];
   const childrenTable: ChildrenTable = {};
 
   nodeList.forEach((node) => {
-    const { children, ...rest } = node;
-    const withoutChildren: NodeElementWithChildrenElements = {
-      ...rest,
-      children: [],
-    };
-
-    childrenTable[node.id] = withoutChildren;
+    childrenTable[node.id] = Object.assign(node, { childrenElements: [] });
   });
 
-  nodeList.forEach((node: NodeElement) => {
+  nodeList.forEach((node) => {
     if (node.parentID !== null) {
-      childrenTable[node.parentID].children.push(node);
+      childrenTable[node.parentID].childrenElements.push(node);
     } else {
-      tree.push(node);
+      tree.push(Object.assign(node, { childrenElements: [] }));
     }
   });
+
   return tree;
 };
 

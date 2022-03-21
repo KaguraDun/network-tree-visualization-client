@@ -5,17 +5,26 @@ import { useDispatch } from 'react-redux';
 
 import TreeNode from '@/components/TreeNode/TreeNode';
 import { changeNodeInfoType, selectNode } from '@/features/node';
+import { NodeElementWithChildren } from '@/models/Node';
 import NodeInfoType from '@/models/NodeInfoType';
 
-const Tree = ({ data }) => {
+interface TreeProps {
+  data: NodeElementWithChildren[];
+}
+
+const Tree = ({ data }: TreeProps) => {
+
   const treeElements = data.map((node) => {
-    const { id, children } = node || [];
+    const { id, childrenElements } = node || [];
 
     return (
       <ul key={id.toString()} className="tree">
         {node && (
           <TreeNode data={node}>
-            {children && children?.length > 0 ? <Tree data={children} /> : ''}
+            {childrenElements && childrenElements?.length > 0 ? (
+              <Tree data={childrenElements} />
+            ) : (
+              ''
           </TreeNode>
         )}
       </ul>
@@ -26,11 +35,6 @@ const Tree = ({ data }) => {
 
   const handleAddRootNode = () => {
     dispatch(changeNodeInfoType(NodeInfoType.create));
-    dispatch(
-      selectNode({
-        id,
-      })
-    );
   };
 
   const isEmpty = treeElements.length === 0;
