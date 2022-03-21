@@ -99,37 +99,46 @@ function NodeInfo() {
       onSubmit={handleFormSubmit}
     >
       <h2> {formType === NodeInfoType.create ? 'Node create' : 'Node'}</h2>
-
-      <label>
-        Node name:
-        <input
-          ref={nameInputRef}
-          name="name"
-          onChange={handleEditNodeInfo}
-          type="text"
-          value={nodeData.name || ''}
-        />
-      </label>
-
-      <label>
-        IP address:
-        <input
-          name="ip"
-          onChange={handleEditNodeInfo}
-          type="text"
-          value={nodeData.ip || ''}
-        />
-      </label>
-
-      <label>
-        Web port:
-        <input
-          name="port"
-          onChange={handleEditNodeInfo}
-          type="text"
-          value={nodeData.port || ''}
-        />
-      </label>
+      <div className="mb-3">
+        {' '}
+        <div className="form-group">
+          <label className="w-100">
+            Node name:
+            <input
+              ref={nameInputRef}
+              className="form-control"
+              name="name"
+              onChange={handleEditNodeInfo}
+              type="text"
+              value={nodeData.name || ''}
+            />
+          </label>
+        </div>
+        <div className="form-group">
+          <label className="w-100">
+            IP address:
+            <input
+              className="form-control"
+              name="ip"
+              onChange={handleEditNodeInfo}
+              type="text"
+              value={nodeData.ip || ''}
+            />
+          </label>
+        </div>
+        <div className="form-group">
+          <label className="w-100">
+            Web port:
+            <input
+              className="form-control"
+              name="port"
+              onChange={handleEditNodeInfo}
+              type="text"
+              value={nodeData.port || ''}
+            />
+          </label>
+        </div>
+      </div>
 
       <div className="d-flex justify-content-between">
         <button
