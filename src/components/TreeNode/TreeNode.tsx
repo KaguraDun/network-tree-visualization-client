@@ -69,7 +69,13 @@ const TreeNode = ({ data, children }) => {
       <div className="nodeElement">
         {hasChildren && (
           <button className="btn" onClick={handleToggleNode} type="button">
-            <i className="bi bi-caret-down-fill" />
+            <i
+              aria-label="Open node icon"
+              className={`bi  ${
+                isOpen ? 'bi-caret-down-fill' : 'bi-caret-right-fill'
+              }`}
+              role="img"
+            />
           </button>
         )}
 
