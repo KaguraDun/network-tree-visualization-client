@@ -22,7 +22,12 @@ const TreeViewer = () => {
     dispatch(getRootNode());
   }, [dispatch]);
 
-  return <Tree data={tree} />;
+  return (
+    <>
+      <h2>Node hierarchy</h2>
+      <Tree data={tree} />
+    </>
+  );
 };
 
 export default TreeViewer;
