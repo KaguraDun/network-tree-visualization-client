@@ -130,6 +130,10 @@ const nodeSlice = createSlice({
       const { id, nodeData } = action.payload;
       state.nodeList[id] = { ...state.nodeList[id], ...nodeData };
     },
+    toggleNodeIsOpen: (state, action) => {
+      const { id } = action.payload;
+      state.nodeList[id].isOpen = !state.nodeList[id].isOpen;
+    },
   },
   extraReducers: {
     [getRootNode.fulfilled]: (state, action) => {
@@ -144,6 +148,7 @@ const nodeSlice = createSlice({
         ip,
         hasChildren,
         children: [],
+        isOpen: false,
       };
     },
     [getRootNode.rejected]: (state, action) => {
@@ -162,6 +167,7 @@ const nodeSlice = createSlice({
         ip,
         hasChildren,
         children: [],
+        isOpen: false,
       };
 
       if (parentID === null) return;
@@ -172,6 +178,7 @@ const nodeSlice = createSlice({
 
       if (shouldUpdateChildren) {
         state.nodeList[parentID].hasChildren = true;
+        state.nodeList[parentID].isOpen = true;
         state.nodeList[parentID].children.push(id);
       }
     },
@@ -219,6 +226,7 @@ export const {
   selectNode,
   updateNodeData,
   changeNodeInfoType,
+  toggleNodeIsOpen,
 } = nodeSlice.actions;
 
 export default nodeSlice.reducer;

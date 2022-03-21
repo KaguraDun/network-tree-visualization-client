@@ -1,6 +1,6 @@
 import './TreeNode.scss';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
@@ -9,12 +9,12 @@ import {
   removeChildNodes,
   removeNodeFromServer,
   selectNode,
+  toggleNodeIsOpen,
 } from '@/features/node';
 import NodeInfoType from '@/models/NodeInfoType';
 
 const TreeNode = ({ data, children }) => {
-  const { id, name, hasChildren } = data;
-  const [isOpen, setIsOpen] = useState(false);
+  const { id, name, hasChildren, isOpen } = data;
 
   const getSelectedNodeID = ({ node }) => node.selectedNodeID;
   const selectedNodeID = useSelector(getSelectedNodeID);
@@ -38,7 +38,7 @@ const TreeNode = ({ data, children }) => {
       );
     }
 
-    setIsOpen((open) => !open);
+    dispatch(toggleNodeIsOpen({ id }));
   };
 
   const handleNodeAddChild = () => {
