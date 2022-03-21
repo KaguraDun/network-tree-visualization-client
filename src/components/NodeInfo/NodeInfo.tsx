@@ -66,7 +66,7 @@ function NodeInfo() {
   };
 
   const handleNodeCreate = () => {
-    const { id } = selectedNodeData || {};
+    const { id = null } = selectedNodeData || {};
 
     dispatch(
       getChildNodes({

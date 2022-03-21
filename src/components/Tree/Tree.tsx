@@ -4,7 +4,8 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import TreeNode from '@/components/TreeNode/TreeNode';
-import { addNode } from '@/features/node';
+import { changeNodeInfoType, selectNode } from '@/features/node';
+import NodeInfoType from '@/models/NodeInfoType';
 
 const Tree = ({ data }) => {
   const treeElements = data.map((node) => {
@@ -24,12 +25,10 @@ const Tree = ({ data }) => {
   const dispatch = useDispatch();
 
   const handleAddRootNode = () => {
+    dispatch(changeNodeInfoType(NodeInfoType.create));
     dispatch(
-      addNode({
-        parentID: null,
-        name: `root`,
-        ip: '123',
-        port: '123',
+      selectNode({
+        id,
       })
     );
   };
