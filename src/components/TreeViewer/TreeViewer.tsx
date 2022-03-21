@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import Tree from '@/components/Tree/Tree';
-import { getRootNode } from '@/features/node';
+import { changeNodeInfoType, getRootNode, selectNode } from '@/features/node';
 import createTree from '@/helpers/createTree';
+import { useAppDispatch, useAppSelector } from '@/hooks/hooks';
+import { NodeElementWithChildren } from '@/models/Node';
+import NodeInfoType from '@/models/NodeInfoType';
 
 const TreeViewer = () => {
-  const [tree, setTree] = useState([]);
+  const [tree, setTree] = useState<NodeElementWithChildren[]>([]);
 
-  const dispatch = useDispatch();
-  const NodeList = ({ node }) => node.nodeList;
-
-  const nodeList = useSelector(NodeList);
+  const dispatch = useAppDispatch();
+  const nodeList = useAppSelector(({ node }) => node.nodeList);
 
   useEffect(() => {
     const treeCopy = JSON.parse(JSON.stringify(Object.values(nodeList)));
     const nodeTree = createTree(treeCopy);
-
+    console.log(nodeTree);
     setTree(nodeTree);
   }, [nodeList]);
 
@@ -24,11 +24,22 @@ const TreeViewer = () => {
     dispatch(getRootNode());
   }, [dispatch]);
 
+  const handleAddRootNode = () => {
+    dispatch(changeNodeInfoType(NodeInfoType.create));
+    dispatch(selectNode(null));
+  };
+
   return (
-    <>
+    <div>
       <h2>Node hierarchy</h2>
-      <Tree data={tree} />
-    </>
+      {tree && tree.length > 0 ? (
+        <Tree data={tree} />
+      ) : (
+        <button className="btn" onClick={handleAddRootNode} type="button">
+          <i className="bi bi-plus-circle" />
+        </button>
+      )}
+    </div>
   );
 };
 

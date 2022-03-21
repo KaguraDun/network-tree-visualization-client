@@ -5,7 +5,7 @@ interface NodeElement {
   ip: string;
   port: number;
   hasChildren: boolean;
-  children: number[];
+  childrenID: number[];
   isOpen: boolean;
 }
 
@@ -16,8 +16,6 @@ interface NodeElementFromServer {
   ip: string;
   port: number;
   hasChildren: boolean;
-  children: number[];
-  isOpen: boolean;
 }
 
 interface UpdateNodeData {
@@ -29,10 +27,15 @@ type NodeData = Pick<NodeElement, 'name' | 'ip' | 'port' | 'parentID'>;
 
 type NodeList = Record<number, NodeElement>;
 
+type NodeElementWithChildren = NodeElement & {
+  childrenElements: NodeElementWithChildren[];
+};
+
 export type {
   NodeData,
   NodeElement,
   NodeElementFromServer,
+  NodeElementWithChildren,
   NodeList,
   UpdateNodeData,
 };
