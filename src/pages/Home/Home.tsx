@@ -1,18 +1,19 @@
 import './Home.scss';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import NodeInfo from '@/components/NodeInfo/NodeInfo';
 import TreeViewer from '@/components/TreeViewer/TreeViewer';
 
 function Home() {
   return (
-    <div>
-      Home
-      <main className="content">
+    <div className="row">
+      <div className="col overflow-auto">
         <TreeViewer />
+      </div>
+      <div className="col ">
         <NodeInfo />
-      </main>
+      </div>
     </div>
   );
 }
