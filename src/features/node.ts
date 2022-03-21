@@ -94,11 +94,11 @@ const nodeSlice = createSlice({
       const clickedID = action.payload;
       const nodesToDelete: number[] = [];
 
-      const childrenSearch = ({ id, children }: NodeElement) => {
+      const childrenSearch = ({ id, childrenID }: NodeElement) => {
         if (id !== clickedID) nodesToDelete.push(id);
 
-        if (children.length > 0) {
-          children.forEach((childrenId: NodeElement['id']) => {
+        if (childrenID.length > 0) {
+          childrenID.forEach((childrenId: NodeElement['id']) => {
             childrenSearch(state.nodeList[childrenId]);
           });
         }
@@ -107,9 +107,9 @@ const nodeSlice = createSlice({
       childrenSearch(state.nodeList[clickedID]);
 
       nodesToDelete.forEach((id) => {
-        const index = state.nodeList[clickedID].children.indexOf(id);
+        const index = state.nodeList[clickedID].childrenID.indexOf(id);
         if (index !== -1) {
-          state.nodeList[clickedID].children.splice(index, 1);
+          state.nodeList[clickedID].childrenID.splice(index, 1);
         }
 
         delete state.nodeList[id];
@@ -120,12 +120,12 @@ const nodeSlice = createSlice({
       const { parentID } = state.nodeList[id];
 
       if (parentID !== null) {
-        const index = state.nodeList[parentID].children.indexOf(id);
+        const index = state.nodeList[parentID].childrenID.indexOf(id);
         if (index !== -1) {
-          state.nodeList[parentID].children.splice(index, 1);
+          state.nodeList[parentID].childrenID.splice(index, 1);
         }
 
-        if (state.nodeList[parentID].children.length === 0) {
+        if (state.nodeList[parentID].childrenID.length === 0) {
           state.nodeList[parentID].hasChildren = false;
         }
       }
@@ -172,7 +172,7 @@ const nodeSlice = createSlice({
           port,
           ip,
           hasChildren,
-          children: [],
+          childrenID: [],
           isOpen: false,
         };
       }
@@ -198,20 +198,20 @@ const nodeSlice = createSlice({
           port,
           ip,
           hasChildren,
-          children: [],
+          childrenID: [],
           isOpen: false,
         };
 
         if (parentID === null) return;
 
-        const parentChildren = state.nodeList[parentID].children;
+        const parentChildren = state.nodeList[parentID].childrenID;
         const isElementExist = parentChildren.indexOf(id) !== -1;
         const shouldUpdateChildren = parentID && !isElementExist;
 
         if (shouldUpdateChildren) {
           state.nodeList[parentID].hasChildren = true;
           state.nodeList[parentID].isOpen = true;
-          state.nodeList[parentID].children.push(id);
+          state.nodeList[parentID].childrenID.push(id);
         }
       }
     );
@@ -239,17 +239,17 @@ const nodeSlice = createSlice({
             ip,
             hasChildren,
             isOpen: false,
-            children: [],
+            childrenID: [],
           };
 
           if (parentID === null) return;
 
-          const parentChildren = state.nodeList[parentID].children;
+          const parentChildren = state.nodeList[parentID].childrenID;
           const isElementExist = parentChildren.indexOf(id) !== -1;
           const shouldUpdateChildren = parentID && !isElementExist;
 
           if (shouldUpdateChildren) {
-            state.nodeList[parentID].children.push(id);
+            state.nodeList[parentID].childrenID.push(id);
           }
         });
       }
