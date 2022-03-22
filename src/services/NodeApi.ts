@@ -7,7 +7,7 @@ enum Mode {
 
 const serverURL = {
   development: 'http://localhost:3000/api',
-  production: '',
+  production: 'https://network-tree-visualization.herokuapp.com/api',
 };
 
 class NodeApi {
