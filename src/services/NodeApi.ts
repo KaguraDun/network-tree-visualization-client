@@ -1,10 +1,20 @@
 import { NodeData, NodeElement, UpdateNodeData } from '@/models/Node';
 
+enum Mode {
+  development = 'development',
+  production = 'production',
+}
+
+const serverURL = {
+  development: 'http://localhost:3000/api',
+  production: '',
+};
+
 class NodeApi {
   private readonly baseURL: string;
 
   constructor() {
-    this.baseURL = 'http://localhost:3000/api';
+    this.baseURL = serverURL[Mode.development];
   }
 
   getRootNode = async () => {
