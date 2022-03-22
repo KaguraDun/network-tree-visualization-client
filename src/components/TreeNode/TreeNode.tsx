@@ -83,7 +83,7 @@ const TreeNode = ({ data, children }: TreeNodeProps) => {
           onClick={handleNodeSelect}
           type="button"
         >
-          {`${id} ${name}`}
+          {name}
         </button>
 
         <button
