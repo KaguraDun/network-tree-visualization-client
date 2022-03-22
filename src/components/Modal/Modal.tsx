@@ -43,7 +43,6 @@ const Modal = ({ title, children, handleOk, handleCancel }: ModalProps) => {
               </button>
               <button
                 className="btn btn-secondary"
-                data-bs-dismiss="modal"
                 onClick={handleCancel}
                 type="button"
               >
