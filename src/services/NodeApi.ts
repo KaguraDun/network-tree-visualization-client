@@ -14,7 +14,7 @@ class NodeApi {
   private readonly baseURL: string;
 
   constructor() {
-    this.baseURL = serverURL[Mode.development];
+    this.baseURL = serverURL[Mode.production];
   }
 
   getRootNode = async () => {
