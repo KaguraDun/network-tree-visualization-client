@@ -20,7 +20,7 @@ const Modal = ({ title, children, handleOk, handleCancel }: ModalProps) => {
 
   return ReactDOM.createPortal(
     <>
-      <div className="modal bg-opacity-50 bg-dark d-block">
+      <div className="modal bg-opacity-50 bg-dark d-block " tabIndex={-1}>
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
