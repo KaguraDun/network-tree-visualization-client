@@ -130,6 +130,8 @@ const nodeSlice = createSlice({
         }
       }
 
+      state.selectedNodeID = null;
+
       delete state.nodeList[id];
     },
     selectNode: (state, action: PayloadAction<NodeElement['id'] | null>) => {

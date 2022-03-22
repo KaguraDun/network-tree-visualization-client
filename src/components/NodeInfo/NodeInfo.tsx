@@ -36,7 +36,7 @@ function NodeInfo() {
   useEffect(() => {
     if (selectedNodeData === null) return;
 
-    const { name, ip, port } = selectedNodeData;
+    const { name, ip, port } = selectedNodeData || {};
 
     setNodeData({ name, ip, port });
   }, [selectedNodeData]);
