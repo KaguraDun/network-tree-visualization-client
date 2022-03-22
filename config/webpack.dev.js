@@ -29,14 +29,13 @@ module.exports = merge(common, {
           'style-loader',
           {
             loader: 'css-loader',
-            options: { sourceMap: true, importLoaders: 1, modules: true },
+            options: { sourceMap: true, importLoaders: 1, modules: false },
           },
           { loader: 'postcss-loader', options: { sourceMap: true } },
           {
             loader: 'sass-loader',
             options: {
               sourceMap: true,
-              additionalData: `@import "@/styles/_variables.scss";\n@import "@/styles/common/_mixins.scss";`,
             },
           },
         ],

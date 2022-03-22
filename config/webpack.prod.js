@@ -24,15 +24,13 @@ module.exports = merge(common, {
             options: {
               importLoaders: 2,
               sourceMap: false,
-              modules: true,
+              modules: false,
             },
           },
           'postcss-loader',
           {  
-          loader: 'sass-loader',
-          options: {
-            additionalData: `@import "@/styles/_variables.scss";\n@import "@/styles/common/_mixins.scss";`,
-          },},
+            loader: 'sass-loader',
+          },
         ],
       },
       {
@@ -67,6 +65,16 @@ module.exports = merge(common, {
     minimizer: [new CssMinimizerPlugin(), '...'],
     runtimeChunk: {
       name: 'runtime',
+    },
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          name: 'vendors',
+          test: /node_modules/,
+          chunks: 'all',
+          enforce: true,
+        },
+      },
     },
   },
   performance: {

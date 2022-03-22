@@ -24,7 +24,7 @@ module.exports = {
   // Where webpack outputs the assets and bundles
   output: {
     path: paths.build,
-    filename: '[name].bundle.js',
+    filename: '[name].[fullhash].bundle.js',
     publicPath: '/',
   },
 
@@ -104,6 +104,8 @@ module.exports = {
       '@/features': `${paths.src}/features`,
       '@/icons': `${paths.public}/icons`,
       '@/images': `${paths.public}/images`,
+      '@/helpers': `${paths.src}/helpers`,
+      '@/hooks': `${paths.src}/hooks`,
       '@/models': `${paths.src}/models`,
       '@/pages': `${paths.src}/pages`,
       '@/services': `${paths.src}/services`,
