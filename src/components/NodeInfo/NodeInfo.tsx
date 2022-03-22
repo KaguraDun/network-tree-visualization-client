@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import {
   addNode,
@@ -7,41 +6,49 @@ import {
   getChildNodes,
   updateNodeDataOnServer,
 } from '@/features/node';
+import { useAppDispatch, useAppSelector } from '@/hooks/hooks';
+import { NodeElement } from '@/models/Node';
 import NodeInfoType from '@/models/NodeInfoType';
 
 function NodeInfo() {
-  const [nodeData, setNodeData] = useState({});
-
-  const dispatch = useDispatch();
-  const nameInputRef = useRef(null);
-
-  const getSelectedNodeID = ({ node }) => node.selectedNodeID;
-  const selectedNodeID = useSelector(getSelectedNodeID);
-
-  const getSelectedNodeData = ({ node }) => {
-    if (selectedNodeID !== undefined) {
-      return node.nodeList[selectedNodeID];
-    }
+  const defaultNodeDataState = {
+    name: '',
+    ip: '',
+    port: 0,
   };
 
-  const selectedNodeData = useSelector(getSelectedNodeData);
+  const [nodeData, setNodeData] =
+    useState<Pick<NodeElement, 'name' | 'ip' | 'port'>>(defaultNodeDataState);
 
-  const getFormType = ({ node }) => node.nodeInfoType;
-  const formType = useSelector(getFormType);
+  const dispatch = useAppDispatch();
+  const nameInputRef = useRef<null | HTMLInputElement>(null);
+
+  const selectedNodeID = useAppSelector(({ node }) => node.selectedNodeID);
+  const selectedNodeData = useAppSelector(({ node }): NodeElement | null => {
+    if (selectedNodeID !== null) {
+      return node.nodeList[selectedNodeID];
+    }
+    return null;
+  });
+
+  const formType = useAppSelector(({ node }) => node.nodeInfoType);
 
   useEffect(() => {
-    const { name, ip, port } = selectedNodeData || {};
+    if (selectedNodeData === null) return;
+
+    const { name, ip, port } = selectedNodeData;
+
     setNodeData({ name, ip, port });
   }, [selectedNodeData]);
 
   const clearNodeData = () => {
-    setNodeData({ name: '', ip: '', port: '' });
+    setNodeData({ name: '', ip: '', port: 0 });
   };
 
   useEffect(() => {
     if (formType === NodeInfoType.create) {
       clearNodeData();
-      nameInputRef.current.focus();
+      nameInputRef.current?.focus();
     }
   }, [formType]);
 
@@ -57,22 +64,26 @@ function NodeInfo() {
   };
 
   const handleSubmitChanges = () => {
+    if (selectedNodeID === null || nodeData === undefined) return;
+
     dispatch(updateNodeDataOnServer({ id: selectedNodeID, nodeData }));
   };
 
   const handleCancelChanges = () => {
-    const { name, ip, port } = selectedNodeData || {};
+    if (selectedNodeData === null) return;
+
+    const { name, ip, port } = selectedNodeData;
+
     setNodeData({ name, ip, port });
   };
 
   const handleNodeCreate = () => {
-    const { id = null } = selectedNodeData || {};
+    if (selectedNodeData === undefined) return;
 
-    dispatch(
-      getChildNodes({
-        parentID: id,
-      })
-    );
+    const { id = null } = selectedNodeData || {};
+    if (id !== null) {
+      dispatch(getChildNodes(id));
+    }
 
     dispatch(
       addNode({
@@ -89,7 +100,7 @@ function NodeInfo() {
     clearNodeData();
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
   };
 
@@ -100,7 +111,6 @@ function NodeInfo() {
     >
       <h2> {formType === NodeInfoType.create ? 'Node create' : 'Node'}</h2>
       <div className="mb-3">
-        {' '}
         <div className="form-group">
           <label className="w-100">
             Node name:
@@ -110,7 +120,7 @@ function NodeInfo() {
               name="name"
               onChange={handleEditNodeInfo}
               type="text"
-              value={nodeData.name || ''}
+              value={nodeData?.name || ''}
             />
           </label>
         </div>
@@ -122,7 +132,7 @@ function NodeInfo() {
               name="ip"
               onChange={handleEditNodeInfo}
               type="text"
-              value={nodeData.ip || ''}
+              value={nodeData?.ip || ''}
             />
           </label>
         </div>
@@ -134,7 +144,7 @@ function NodeInfo() {
               name="port"
               onChange={handleEditNodeInfo}
               type="text"
-              value={nodeData.port || ''}
+              value={nodeData?.port || ''}
             />
           </label>
         </div>
