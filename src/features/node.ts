@@ -121,6 +121,7 @@ const nodeSlice = createSlice({
 
       if (parentID !== null) {
         const index = state.nodeList[parentID].childrenID.indexOf(id);
+
         if (index !== -1) {
           state.nodeList[parentID].childrenID.splice(index, 1);
         }

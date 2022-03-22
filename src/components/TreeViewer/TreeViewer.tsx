@@ -16,7 +16,7 @@ const TreeViewer = () => {
   useEffect(() => {
     const treeCopy = JSON.parse(JSON.stringify(Object.values(nodeList)));
     const nodeTree = createTree(treeCopy);
-    console.log(nodeTree);
+
     setTree(nodeTree);
   }, [nodeList]);
 
@@ -32,6 +32,7 @@ const TreeViewer = () => {
   return (
     <div>
       <h2>Node hierarchy</h2>
+
       {tree && tree.length > 0 ? (
         <Tree data={tree} />
       ) : (
