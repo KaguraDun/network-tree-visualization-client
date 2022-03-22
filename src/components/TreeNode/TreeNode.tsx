@@ -2,11 +2,11 @@ import './TreeNode.scss';
 
 import React from 'react';
 
+import { setShowModal } from '@/features/app';
 import {
   changeNodeInfoType,
   getChildNodes,
   removeChildNodes,
-  removeNodeFromServer,
   selectNode,
   toggleNodeIsOpen,
 } from '@/features/node';
@@ -43,8 +43,9 @@ const TreeNode = ({ data, children }: TreeNodeProps) => {
     dispatch(selectNode(id));
   };
 
-  const handleNodeDelete = () => {
-    dispatch(removeNodeFromServer(id));
+  const handleShowDeleteModal = () => {
+    dispatch(selectNode(id));
+    dispatch(setShowModal(true));
   };
 
   const handleNodeSelect = () => {
@@ -55,56 +56,58 @@ const TreeNode = ({ data, children }: TreeNodeProps) => {
   const isSelected = id === selectedNodeID;
 
   return (
-    <li
-      key={id.toString()}
-      className={`d-flex flex-column align-items-baseline ${
-        !hasChildren && 'tree-node'
-      }`}
-    >
-      <div
-        className={`tree-node-element d-flex w100 ${
-          isSelected && 'tree-node-element-selected '
+    <>
+      <li
+        key={id.toString()}
+        className={`d-flex flex-column align-items-baseline ${
+          !hasChildren && 'tree-node'
         }`}
       >
-        {hasChildren && (
-          <button className="btn" onClick={handleToggleNode} type="button">
-            <i
-              aria-label="Open node icon"
-              className={`bi  ${
-                isOpen ? 'bi-caret-down-fill' : 'bi-caret-right-fill'
-              }`}
-              role="img"
-            />
+        <div
+          className={`tree-node-element d-flex w100 ${
+            isSelected && 'tree-node-element-selected '
+          }`}
+        >
+          {hasChildren && (
+            <button className="btn" onClick={handleToggleNode} type="button">
+              <i
+                aria-label="Open node icon"
+                className={`bi  ${
+                  isOpen ? 'bi-caret-down-fill' : 'bi-caret-right-fill'
+                }`}
+                role="img"
+              />
+            </button>
+          )}
+
+          <button
+            className="btn btn p-1 me-2"
+            onClick={handleNodeSelect}
+            type="button"
+          >
+            {name}
           </button>
-        )}
 
-        <button
-          className="btn btn p-1 me-2"
-          onClick={handleNodeSelect}
-          type="button"
-        >
-          {name}
-        </button>
+          <button
+            className="btn-add btn"
+            onClick={handleNodeAddChild}
+            type="button"
+          >
+            <i className="bi bi-plus-circle" />
+          </button>
 
-        <button
-          className="btn-add btn"
-          onClick={handleNodeAddChild}
-          type="button"
-        >
-          <i className="bi bi-plus-circle" />
-        </button>
+          <button
+            className="btn-del btn"
+            onClick={handleShowDeleteModal}
+            type="button"
+          >
+            <i className="bi bi-dash-circle" />
+          </button>
+        </div>
 
-        <button
-          className="btn-del btn"
-          onClick={handleNodeDelete}
-          type="button"
-        >
-          <i className="bi bi-dash-circle" />
-        </button>
-      </div>
-
-      {children}
-    </li>
+        {children}
+      </li>
+    </>
   );
 };
 
