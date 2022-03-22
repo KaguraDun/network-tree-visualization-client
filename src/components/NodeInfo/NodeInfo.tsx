@@ -107,11 +107,9 @@ function NodeInfo() {
   const handleEditNodeInfo = (e: React.ChangeEvent) => {
     if (e.target instanceof HTMLInputElement) {
       const { value, name } = e.target;
-      const trimmedValue = value.trim();
-
       setNodeData((oldData) => ({
         ...oldData,
-        [name]: trimmedValue,
+        [name]: value,
       }));
     }
   };
@@ -120,7 +118,7 @@ function NodeInfo() {
     if (selectedNodeID === null) return;
 
     const { name, ip, port } = nodeData;
-    const data = { name, ip, port: Number(port) };
+    const data = { name: name.trim(), ip, port: Number(port) };
 
     dispatch(updateNodeDataOnServer({ id: selectedNodeID, nodeData: data }));
   };
@@ -147,7 +145,7 @@ function NodeInfo() {
     }
 
     const { name, ip, port } = nodeData;
-    const data = { name, ip, port: Number(port) };
+    const data = { name: name.trim(), ip, port: Number(port) };
 
     dispatch(
       addNode({
