@@ -107,16 +107,17 @@ function NodeInfo() {
   const handleEditNodeInfo = (e: React.ChangeEvent) => {
     if (e.target instanceof HTMLInputElement) {
       const { value, name } = e.target;
+      const trimmedValue = value.trim();
 
       setNodeData((oldData) => ({
         ...oldData,
-        [name]: value,
+        [name]: trimmedValue,
       }));
     }
   };
 
   const handleSubmitChanges = () => {
-    if (selectedNodeID === null || nodeData === undefined) return;
+    if (selectedNodeID === null) return;
 
     const { name, ip, port } = nodeData;
     const data = { name, ip, port: Number(port) };
