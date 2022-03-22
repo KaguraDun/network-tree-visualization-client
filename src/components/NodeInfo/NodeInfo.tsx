@@ -4,6 +4,7 @@ import {
   addNode,
   changeNodeInfoType,
   getChildNodes,
+  selectNode,
   updateNodeDataOnServer,
 } from '@/features/node';
 import { useAppDispatch, useAppSelector } from '@/hooks/hooks';
@@ -130,6 +131,7 @@ function NodeInfo() {
 
     setNodeData({ name, ip, port: String(port) });
     resetFormErrors();
+    dispatch(selectNode(null));
   };
 
   const handleNodeCreate = () => {
@@ -155,6 +157,7 @@ function NodeInfo() {
 
   const handleCancelNodeCreate = () => {
     dispatch(changeNodeInfoType(NodeInfoType.edit));
+    dispatch(selectNode(null));
     clearNodeData();
     resetFormErrors();
   };
