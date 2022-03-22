@@ -125,19 +125,22 @@ function NodeInfo() {
   };
 
   const handleCancelChanges = () => {
+    dispatch(changeNodeInfoType(NodeInfoType.await));
+    dispatch(selectNode(null));
+    resetFormErrors();
+
     if (selectedNodeData === null) return;
 
     const { name, ip, port } = selectedNodeData;
 
     setNodeData({ name, ip, port: String(port) });
-    resetFormErrors();
-    dispatch(selectNode(null));
   };
 
   const handleNodeCreate = () => {
     if (selectedNodeData === undefined) return;
 
     const { id = null } = selectedNodeData || {};
+
     if (id !== null) {
       dispatch(getChildNodes(id));
     }
@@ -156,8 +159,9 @@ function NodeInfo() {
   };
 
   const handleCancelNodeCreate = () => {
-    dispatch(changeNodeInfoType(NodeInfoType.edit));
+    dispatch(changeNodeInfoType(NodeInfoType.await));
     dispatch(selectNode(null));
+
     clearNodeData();
     resetFormErrors();
   };
@@ -165,15 +169,15 @@ function NodeInfo() {
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (formType === NodeInfoType.await) return;
+
     const hasErrors = validateInputData();
 
     if (hasErrors) return;
 
-    if (formType === NodeInfoType.create) {
-      handleNodeCreate();
-    } else {
-      handleSubmitChanges();
-    }
+    if (formType === NodeInfoType.create) handleNodeCreate();
+
+    if (formType === NodeInfoType.edit) handleSubmitChanges();
 
     resetFormErrors();
   };

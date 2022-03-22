@@ -82,7 +82,7 @@ interface NodeState {
 
 const initialState: NodeState = {
   selectedNodeID: null,
-  nodeInfoType: NodeInfoType.edit,
+  nodeInfoType: NodeInfoType.await,
   nodeList: {},
 };
 
