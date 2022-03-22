@@ -1,7 +1,6 @@
 import './TreeNode.scss';
 
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import {
   changeNodeInfoType,
@@ -11,60 +10,46 @@ import {
   selectNode,
   toggleNodeIsOpen,
 } from '@/features/node';
+import { useAppDispatch, useAppSelector } from '@/hooks/hooks';
+import { NodeElementWithChildren } from '@/models/Node';
 import NodeInfoType from '@/models/NodeInfoType';
 
-const TreeNode = ({ data, children }) => {
+interface TreeNodeProps {
+  data: NodeElementWithChildren;
+  children: React.ReactNode;
+}
+
+const TreeNode = ({ data, children }: TreeNodeProps) => {
   const { id, name, hasChildren, isOpen } = data;
 
-  const getSelectedNodeID = ({ node }) => node.selectedNodeID;
-  const selectedNodeID = useSelector(getSelectedNodeID);
+  const dispatch = useAppDispatch();
 
-  const dispatch = useDispatch();
+  const selectedNodeID = useAppSelector(({ node }) => node.selectedNodeID);
 
   const handleToggleNode = () => {
     if (!hasChildren) return;
 
     if (!isOpen) {
-      dispatch(
-        getChildNodes({
-          parentID: id,
-        })
-      );
+      dispatch(getChildNodes(id));
     } else {
-      dispatch(
-        removeChildNodes({
-          parentID: id,
-        })
-      );
+      dispatch(removeChildNodes(id));
     }
 
-    dispatch(toggleNodeIsOpen({ id }));
+    dispatch(toggleNodeIsOpen(id));
   };
 
   const handleNodeAddChild = () => {
     dispatch(changeNodeInfoType(NodeInfoType.create));
-    dispatch(
-      selectNode({
-        id,
-      })
-    );
+    dispatch(selectNode(id));
   };
 
   const handleNodeDelete = () => {
-    dispatch(
-      removeNodeFromServer({
-        id,
-      })
-    );
+    dispatch(removeNodeFromServer(id));
   };
 
   const handleNodeSelect = () => {
     dispatch(changeNodeInfoType(NodeInfoType.edit));
-    dispatch(
-      selectNode({
-        id,
-      })
-    );
+    dispatch(selectNode(id));
   };
 
   const isSelected = id === selectedNodeID;
