@@ -33,17 +33,20 @@ function NodeInfo() {
 
   const formType = useAppSelector(({ node }) => node.nodeInfoType);
 
+  const clearNodeData = () => {
+    setNodeData({ name: '', ip: '', port: 0 });
+  };
+
   useEffect(() => {
-    if (selectedNodeData === null) return;
+    if (selectedNodeData === null) {
+      clearNodeData();
+      return;
+    }
 
     const { name, ip, port } = selectedNodeData || {};
 
     setNodeData({ name, ip, port });
   }, [selectedNodeData]);
-
-  const clearNodeData = () => {
-    setNodeData({ name: '', ip: '', port: 0 });
-  };
 
   useEffect(() => {
     if (formType === NodeInfoType.create) {
