@@ -204,8 +204,8 @@ const nodeSlice = createSlice({
 
         if (parentID === null) return;
 
-        const parentChildren = state.nodeList[parentID].childrenID;
-        const isElementExist = parentChildren.indexOf(id) !== -1;
+        const parentChildrenID = state.nodeList[parentID].childrenID;
+        const isElementExist = parentChildrenID.indexOf(id) !== -1;
         const shouldUpdateChildren = parentID && !isElementExist;
 
         if (shouldUpdateChildren) {
@@ -244,8 +244,8 @@ const nodeSlice = createSlice({
 
           if (parentID === null) return;
 
-          const parentChildren = state.nodeList[parentID].childrenID;
-          const isElementExist = parentChildren.indexOf(id) !== -1;
+          const parentChildrenID = state.nodeList[parentID].childrenID;
+          const isElementExist = parentChildrenID.indexOf(id) !== -1;
           const shouldUpdateChildren = parentID && !isElementExist;
 
           if (shouldUpdateChildren) {
