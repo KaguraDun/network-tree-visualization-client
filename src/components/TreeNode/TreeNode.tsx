@@ -71,7 +71,7 @@ const TreeNode = ({ data, children }: TreeNodeProps) => {
           {hasChildren && (
             <button className="btn" onClick={handleToggleNode} type="button">
               <i
-                aria-label="Open node icon"
+                aria-label="Open node"
                 className={`bi  ${
                   isOpen ? 'bi-caret-down-fill' : 'bi-caret-right-fill'
                 }`}
@@ -81,6 +81,7 @@ const TreeNode = ({ data, children }: TreeNodeProps) => {
           )}
 
           <button
+            aria-label="Select node"
             className="btn btn p-1 me-2"
             onClick={handleNodeSelect}
             type="button"
@@ -89,6 +90,7 @@ const TreeNode = ({ data, children }: TreeNodeProps) => {
           </button>
 
           <button
+            aria-label="Add node"
             className="btn-add btn"
             onClick={handleNodeAddChild}
             type="button"
@@ -97,6 +99,7 @@ const TreeNode = ({ data, children }: TreeNodeProps) => {
           </button>
 
           <button
+            aria-label="Delete node"
             className="btn-del btn"
             onClick={handleShowDeleteModal}
             type="button"
