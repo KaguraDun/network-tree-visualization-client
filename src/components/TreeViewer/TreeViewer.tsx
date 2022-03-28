@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import Modal from '@/components/Modal/Modal';
+import Spinner from '@/components/Spinner/Spinner';
 import Tree from '@/components/Tree/Tree';
 import { setShowModal } from '@/features/app';
 import {
@@ -13,14 +15,13 @@ import { useAppDispatch, useAppSelector } from '@/hooks/hooks';
 import { NodeElementWithChildren } from '@/models/Node';
 import NodeInfoType from '@/models/NodeInfoType';
 
-import Modal from '../Modal/Modal';
-
 const TreeViewer = () => {
   const [tree, setTree] = useState<NodeElementWithChildren[]>([]);
 
   const dispatch = useAppDispatch();
   const nodeList = useAppSelector(({ node }) => node.nodeList);
   const selectedNodeID = useAppSelector(({ node }) => node.selectedNodeID);
+  const isRootLoading = useAppSelector(({ node }) => node.isRootLoading);
 
   useEffect(() => {
     const treeCopy = JSON.parse(JSON.stringify(Object.values(nodeList)));
@@ -50,13 +51,16 @@ const TreeViewer = () => {
     dispatch(selectNode(null));
   };
 
+  const showTree = tree && tree.length > 0;
+  const showButton = isRootLoading === false && !showTree;
+
   return (
-    <div>
+    <section>
       <h2>Node hierarchy</h2>
 
-      {tree && tree.length > 0 ? (
-        <Tree data={tree} />
-      ) : (
+      {isRootLoading && <Spinner />}
+      {showTree && <Tree data={tree} />}
+      {showButton && (
         <button className="btn" onClick={handleAddRootNode} type="button">
           <i className="bi bi-plus-circle" />
         </button>
@@ -69,7 +73,7 @@ const TreeViewer = () => {
       >
         Node and all child nodes will be deleted, are you sure?
       </Modal>
-    </div>
+    </section>
   );
 };
 

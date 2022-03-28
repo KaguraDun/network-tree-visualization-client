@@ -1,4 +1,8 @@
 .tree {
   padding: 0;
   padding-left: 20px;
+
+  &:first-of-type {
+    padding-left: 0;
+  }
 }

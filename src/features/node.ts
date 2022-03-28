@@ -78,12 +78,14 @@ interface NodeState {
   selectedNodeID: number | null;
   nodeInfoType: NodeInfoType;
   nodeList: NodeList;
+  isRootLoading: boolean;
 }
 
 const initialState: NodeState = {
   selectedNodeID: null,
   nodeInfoType: NodeInfoType.await,
   nodeList: {},
+  isRootLoading: false,
 };
 
 const nodeSlice = createSlice({
@@ -178,8 +180,14 @@ const nodeSlice = createSlice({
           childrenID: [],
           isOpen: false,
         };
+
+        state.isRootLoading = false;
       }
     );
+
+    builder.addCase(getRootNode.pending, (state) => {
+      state.isRootLoading = true;
+    });
 
     builder.addCase(
       addNode.fulfilled,
