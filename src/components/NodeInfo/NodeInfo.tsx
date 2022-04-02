@@ -175,7 +175,6 @@ function NodeInfo() {
     if (hasErrors) return;
 
     if (formType === NodeInfoType.create) handleNodeCreate();
-
     if (formType === NodeInfoType.edit) handleSubmitChanges();
 
     resetFormErrors();

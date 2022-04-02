@@ -12,6 +12,7 @@ interface TreeProps {
 const Tree = ({ data }: TreeProps) => {
   const treeElements = data.map((node) => {
     const { id, childrenElements } = node || [];
+
     const isChildrenExist = childrenElements?.length > 0;
 
     return (
