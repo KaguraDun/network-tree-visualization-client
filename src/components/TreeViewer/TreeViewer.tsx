@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import Modal from '@/components/Modal/Modal';
 import Spinner from '@/components/Spinner/Spinner';
@@ -12,21 +12,16 @@ import {
 } from '@/features/node';
 import createTree from '@/helpers/createTree';
 import { useAppDispatch, useAppSelector } from '@/hooks/hooks';
-import { NodeElementWithChildren } from '@/models/Node';
 import NodeInfoType from '@/models/NodeInfoType';
 
 const TreeViewer = () => {
-  const [tree, setTree] = useState<NodeElementWithChildren[]>([]);
-
   const dispatch = useAppDispatch();
   const nodeList = useAppSelector(({ node }) => node.nodeList);
   const selectedNodeID = useAppSelector(({ node }) => node.selectedNodeID);
 
-  useEffect(() => {
+  const tree = useMemo(() => {
     const treeCopy = JSON.parse(JSON.stringify(Object.values(nodeList)));
-    const nodeTree = createTree(treeCopy);
-
-    setTree(nodeTree);
+    return createTree(treeCopy);
   }, [nodeList]);
 
   useEffect(() => {
