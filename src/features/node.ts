@@ -197,6 +197,10 @@ const nodeSlice = createSlice({
       state.isRootLoading = true;
     });
 
+    builder.addCase(getRootNode.rejected, (state) => {
+      state.isRootLoading = false;
+    });
+
     builder.addCase(
       addNode.fulfilled,
       (state, action: PayloadAction<NodeElementFromServer[]>) => {

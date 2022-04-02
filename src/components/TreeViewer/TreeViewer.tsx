@@ -21,7 +21,6 @@ const TreeViewer = () => {
   const dispatch = useAppDispatch();
   const nodeList = useAppSelector(({ node }) => node.nodeList);
   const selectedNodeID = useAppSelector(({ node }) => node.selectedNodeID);
-  const isRootLoading = useAppSelector(({ node }) => node.isRootLoading);
 
   useEffect(() => {
     const treeCopy = JSON.parse(JSON.stringify(Object.values(nodeList)));
@@ -51,6 +50,7 @@ const TreeViewer = () => {
     dispatch(selectNode(null));
   };
 
+  const isRootLoading = useAppSelector(({ node }) => node.isRootLoading);
   const showTree = tree && tree.length > 0;
   const showButton = isRootLoading === false && !showTree;
 
