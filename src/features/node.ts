@@ -79,6 +79,10 @@ interface NodeState {
   nodeInfoType: NodeInfoType;
   nodeList: NodeList;
   isRootLoading: boolean;
+  childLoading: {
+    parentID: number | null;
+    status: boolean;
+  };
 }
 
 const initialState: NodeState = {
@@ -86,6 +90,10 @@ const initialState: NodeState = {
   nodeInfoType: NodeInfoType.await,
   nodeList: {},
   isRootLoading: false,
+  childLoading: {
+    parentID: null,
+    status: false,
+  },
 };
 
 const nodeSlice = createSlice({
@@ -224,6 +232,9 @@ const nodeSlice = createSlice({
           state.nodeList[parentID].isOpen = true;
           state.nodeList[parentID].childrenID.push(id);
         }
+
+        state.childLoading.parentID = null;
+        state.childLoading.status = false;
       }
     );
 
@@ -262,9 +273,19 @@ const nodeSlice = createSlice({
           if (shouldUpdateChildren) {
             state.nodeList[parentID].childrenID.push(id);
           }
+
+          state.childLoading.parentID = null;
+          state.childLoading.status = false;
         });
       }
     );
+
+    builder.addCase(getChildNodes.pending, (state, action) => {
+      const parentID = action.meta.arg;
+
+      state.childLoading.parentID = parentID;
+      state.childLoading.status = true;
+    });
   },
 });
 

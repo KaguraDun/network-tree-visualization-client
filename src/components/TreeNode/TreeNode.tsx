@@ -2,6 +2,7 @@ import './TreeNode.scss';
 
 import React from 'react';
 
+import Spinner from '@/components/Spinner/Spinner';
 import { setShowModal } from '@/features/app';
 import {
   changeNodeInfoType,
@@ -54,6 +55,9 @@ const TreeNode = ({ data, children }: TreeNodeProps) => {
   };
 
   const isSelected = id === selectedNodeID;
+  const childLoading = useAppSelector(({ node }) => node.childLoading);
+  const showSpinner =
+    childLoading.status === true && childLoading.parentID === id;
 
   return (
     <>
@@ -107,7 +111,7 @@ const TreeNode = ({ data, children }: TreeNodeProps) => {
             <i className="bi bi-dash-circle" />
           </button>
         </div>
-
+        {showSpinner && <Spinner />}
         {children}
       </li>
     </>
